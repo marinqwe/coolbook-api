@@ -3,6 +3,12 @@ module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define(
     "Post",
     {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
       title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -11,21 +17,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      upvotes: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-      },
-      downvotes: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-      },
     },
     {}
   );
   Post.associate = function (models) {
     Post.belongsTo(models.User, {
-      foreignkey: "postId",
-      onDelete: "CASCADE",
+      as: "user",
+    });
+    Post.hasMany(models.UserLikes, {
+      foreignKey: "id",
+      as: "userlikes",
     });
   };
   return Post;

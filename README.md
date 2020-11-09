@@ -4,7 +4,7 @@
 variables.env
 ```
 
-PORT = 8080
+PORT = <port>
 
 DB_USER = <database user>
 DB_NAME = <name>

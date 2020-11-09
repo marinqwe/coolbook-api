@@ -1,46 +1,68 @@
-const { User } = require("../db/models");
+const { User, UserLikes } = require("../db/models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-require("dotenv").config({ path: "variables.env" });
 const {
   registerValidation,
   loginValidation,
 } = require("../helpers/validation");
+const authConfig = require("../helpers/authConfig");
 
 module.exports = {
-  async register(req, res) {
+  async register(req, res, next) {
     const { email, password } = req.body;
 
     const { error } = registerValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error) return next(error.details[0].message);
 
     const user = await User.findOne({ where: { email } });
-    if (user) return res.status(400).send("Email already exists.");
+    if (user) return next("Email already exists.");
 
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
 
-    const newUser = await User.create({ ...req.body, password: hashedPass });
+    const newUser = await User.create({
+      ...req.body,
+      password: hashedPass,
+      userImg: req.file.path,
+    });
+    if (!newUser) return next("Register failed, please try again.");
+
     return res.status(201).send(newUser);
   },
-  async login(req, res) {
+  async login(req, res, next) {
     const { email, password } = req.body;
-
     const { error } = loginValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error) return next(error.details[0].message);
 
     const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(400).send("Email not found.");
+    if (!user) return next("Email not found.");
 
     const isValidPass = await bcrypt.compare(password, user.password);
-    if (!isValidPass) return res.status(400).send("Invalid password.");
+    if (!isValidPass) return next("Invalid password.");
 
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-      expiresIn: 18000000,
+    jwt.sign({ email }, authConfig.jwt.secret, function (err, token) {
+      if (err) return next(err);
+
+      res.cookie("jwt", token, authConfig.jwt.cookie);
+
+      return res.json({ jwt: token, user });
     });
-    res.header("Bearer", token).send(token);
   },
-  async testAuth(req, res) {
-    return res.send(req.user);
+  async logout(req, res) {
+    res.clearCookie("jwt");
+    return res.status(200).send("Success");
+  },
+  async imgTest(req, res) {
+    return res.send({ img: req.file, bodyData: req.body });
+  },
+  async getUser(req, res) {
+    if (req.user) {
+      const user = await User.findOne({
+        where: { email: req.user },
+      });
+      return res.send(user);
+    }
+
+    return res.json({ msg: "Not logged in" });
   },
 };
