@@ -2,11 +2,12 @@
 ### -a simple, facebook-like app, with user login, registration, posts etc. (more features coming)
 
 ### What is used
-
+```
 Node - 12.16.3
 Database - postgre with sequelize ORM, should also work with mysql
 postgre(pg) - 8.4.1
 pg-hstore - 2.3.3
+```
 
 ### How it's used
 
