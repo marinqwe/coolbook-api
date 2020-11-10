@@ -1,4 +1,3 @@
-"use strict";
 module.exports = (sequelize, DataTypes) => {
   const UserLikes = sequelize.define(
     "UserLikes",
@@ -11,6 +10,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       voteValue: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
+      postId: {
+        type: DataTypes.INTEGER,
+        foreignKey: true,
+        allowNull: false,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        foreignKey: true,
         allowNull: false,
       },
     },

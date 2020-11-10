@@ -1,4 +1,3 @@
-"use strict";
 module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define(
     "Post",
@@ -17,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      userId: {
+        type: DataTypes.INTEGER,
+        foreignKey: true,
+        allowNull: false,
+      },
     },
     {}
   );
@@ -25,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       as: "user",
     });
     Post.hasMany(models.UserLikes, {
-      foreignKey: "id",
+      foreignKey: "postId",
       as: "userlikes",
     });
   };
