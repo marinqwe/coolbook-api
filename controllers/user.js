@@ -52,9 +52,6 @@ module.exports = {
     res.clearCookie("jwt");
     return res.status(200).send("Success");
   },
-  async imgTest(req, res) {
-    return res.send({ img: req.file, bodyData: req.body });
-  },
   async getUser(req, res) {
     if (req.user) {
       const user = await User.findOne({

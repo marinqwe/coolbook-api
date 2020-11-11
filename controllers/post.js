@@ -2,10 +2,6 @@ const { Post, UserLikes } = require("../db/models");
 const { postValidation } = require("../helpers/validation");
 
 module.exports = {
-  async testRoute(req, res) {
-    console.log(req.user);
-    return res.send("Heyoo");
-  },
   async create(req, res, next) {
     const { error } = postValidation(req.body.post);
     if (error) return next(error.details[0].message);

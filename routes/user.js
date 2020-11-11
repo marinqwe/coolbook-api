@@ -12,6 +12,5 @@ userRouter.get(
 userRouter.get("/logout", authorize, user.logout);
 userRouter.post("/register", upload.single("userImg"), user.register);
 userRouter.post("/login", user.login);
-userRouter.post("/upload", upload.single("userImg"), user.imgTest);
 
 module.exports = userRouter;
