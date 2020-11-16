@@ -3,6 +3,7 @@ const userLikesRouter = express.Router();
 const { userLikes } = require("../controllers");
 const authorize = require("../helpers/authorize");
 
-userLikesRouter.post("/", authorize, userLikes.userVote);
+userLikesRouter.get("/", userLikes.getAll);
+userLikesRouter.all("/", authorize, userLikes.userVote);
 
 module.exports = userLikesRouter;

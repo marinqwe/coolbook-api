@@ -1,4 +1,4 @@
-const { User, UserLikes } = require("../db/models");
+const { User } = require("../db/models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const {
@@ -9,10 +9,9 @@ const authConfig = require("../helpers/authConfig");
 
 module.exports = {
   async register(req, res, next) {
-    const { email, password } = req.body;
-
-    const { error } = registerValidation(req.body);
+    const { error, value } = registerValidation(req.body);
     if (error) return next(error.details[0].message);
+    const { email, password } = value;
 
     const user = await User.findOne({ where: { email } });
     if (user) return next("Email already exists.");
@@ -30,9 +29,9 @@ module.exports = {
     return res.status(201).send(newUser);
   },
   async login(req, res, next) {
-    const { email, password } = req.body;
-    const { error } = loginValidation(req.body);
+    const { error, value } = loginValidation(req.body);
     if (error) return next(error.details[0].message);
+    const { email, password } = value;
 
     const user = await User.findOne({ where: { email } });
     if (!user) return next("Email not found.");
