@@ -4,6 +4,6 @@ const { userLikes } = require("../controllers");
 const authorize = require("../helpers/authorize");
 
 userLikesRouter.get("/", userLikes.getAll);
-userLikesRouter.all("/", authorize, userLikes.userVote);
+userLikesRouter.post("/", authorize, userLikes.userVote);
 
 module.exports = userLikesRouter;

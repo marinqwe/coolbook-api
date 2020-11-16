@@ -27,7 +27,7 @@ module.exports = {
       },
       include: {
         model: UserLikes,
-        as: "userlikes"
+        as: "userlikes",
       },
     });
     if (!post) return next("Post not found");
@@ -53,7 +53,14 @@ module.exports = {
       },
     });
     if (!post) return next("Post not found");
-    const updatedPost = await post.update({ ...req.body.post });
+    const updatedPost = await post.update(
+      { ...req.body.post },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    );
     if (!updatedPost) return next("There was an error, please try again.");
     return res.send(updatedPost);
   },
