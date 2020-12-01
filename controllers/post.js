@@ -47,7 +47,6 @@ module.exports = {
     return res.send(post);
   },
   async updatePost(req, res, next) {
-    console.log("POST: ", req.body);
     const { error, value } = postValidation(req.body);
     if (error) return next(error.details[0].message);
     const { title, content } = value;
