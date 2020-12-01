@@ -20,7 +20,7 @@ function loginValidation(formData) {
 function postValidation(formData) {
   const schema = Joi.object({
     title: Joi.string().min(2).required(),
-    content: Joi.string().required(),
+    content: Joi.string().required()
   });
   return schema.validate(formData);
 }

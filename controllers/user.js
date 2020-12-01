@@ -39,13 +39,17 @@ module.exports = {
     const isValidPass = await bcrypt.compare(password, user.password);
     if (!isValidPass) return next("Invalid password.");
 
-    jwt.sign({ email }, authConfig.jwt.secret, function (err, token) {
-      if (err) return next(err);
+    jwt.sign(
+      { email, role: user.role },
+      authConfig.jwt.secret,
+      function (err, token) {
+        if (err) return next(err);
 
-      res.cookie("jwt", token, authConfig.jwt.cookie);
+        res.cookie("jwt", token, authConfig.jwt.cookie);
 
-      return res.json({ jwt: token, user });
-    });
+        return res.json({ jwt: token, user });
+      }
+    );
   },
   async logout(req, res) {
     res.clearCookie("jwt");
@@ -54,7 +58,7 @@ module.exports = {
   async getUser(req, res) {
     if (req.user) {
       const user = await User.findOne({
-        where: { email: req.user },
+        where: { email: req.user.email },
       });
       return res.send(user);
     }

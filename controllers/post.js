@@ -3,10 +3,13 @@ const { postValidation } = require("../helpers/validation");
 
 module.exports = {
   async create(req, res, next) {
-    const { error } = postValidation(req.body.post);
+    const { error, value } = postValidation(req.body.post);
     if (error) return next(error.details[0].message);
 
-    const post = await Post.create({ ...req.body.post, userId: req.body.id });
+    const post = await Post.create({
+      ...value,
+      userId: req.body.userId,
+    });
     if (!post) return next("There was an error, please try again.");
 
     return res.status(201).send(post);
@@ -44,20 +47,23 @@ module.exports = {
     return res.send(post);
   },
   async updatePost(req, res, next) {
-    const { error } = postValidation(req.body.post);
+    console.log("POST: ", req.body);
+    const { error, value } = postValidation(req.body);
     if (error) return next(error.details[0].message);
+    const { title, content } = value;
+    const id = req.params.id;
 
     const post = await Post.findOne({
       where: {
-        id: req.params.id,
+        id,
       },
     });
     if (!post) return next("Post not found");
     const updatedPost = await post.update(
-      { ...req.body.post },
+      { title, content },
       {
         where: {
-          id: req.params.id,
+          id,
         },
       }
     );

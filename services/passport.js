@@ -10,7 +10,7 @@ const passportStrategy = new JwtCookieComboStrategy(
     if (!payload.email) {
       return done(null, false);
     }
-    return done(null, payload.email);
+    return done(null, { email: payload.email, role: payload.role });
   }
 );
 
