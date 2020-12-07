@@ -1,16 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
-  const Post = sequelize.define(
-    "Post",
+  const Comment = sequelize.define(
+    "Comment",
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
         autoIncrement: true,
-      },
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false,
       },
       content: {
         type: DataTypes.STRING,
@@ -21,21 +17,21 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: true,
         allowNull: false,
       },
+      postId: {
+        type: DataTypes.INTEGER,
+        foreignKey: true,
+        allowNull: false,
+      },
     },
     {}
   );
-  Post.associate = function (models) {
-    Post.belongsTo(models.User, {
+  Comment.associate = function (models) {
+    Comment.belongsTo(models.User, {
       as: "user",
     });
-    Post.hasMany(models.UserLikes, {
-      foreignKey: "postId",
-      as: "userlikes",
-    });
-    Post.hasMany(models.Comment, {
-      foreignKey: "postId",
-      as: "comment",
+    Comment.belongsTo(models.Post, {
+      as: "post",
     });
   };
-  return Post;
+  return Comment;
 };

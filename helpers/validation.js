@@ -34,9 +34,17 @@ function postValidation(formData) {
   return schema.validate(formData);
 }
 
+function commentValidation(formData) {
+  const schema = Joi.object({
+    content: Joi.string().min(1).required(),
+  });
+  return schema.validate(formData);
+}
+
 module.exports = {
   registerValidation,
   updateProfileValidation,
   loginValidation,
   postValidation,
+  commentValidation,
 };
