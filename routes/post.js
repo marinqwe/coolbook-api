@@ -7,7 +7,7 @@ postRouter.get("/", post.getAll);
 postRouter.post("/", authorize, post.create);
 
 postRouter.get("/:id", post.getPost);
-postRouter.delete("/:id", post.deletePost);
-postRouter.put("/:id", post.updatePost);
+postRouter.delete("/:id", authorize, post.deletePost);
+postRouter.put("/:id", authorize, post.updatePost);
 
 module.exports = postRouter;

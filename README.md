@@ -1,15 +1,17 @@
-# Nodejs API for coolbook-client
-### -a simple, facebook-like app, with user login, registration, posts etc. (more features coming)
+## Backend for coolbook-client
 
-### What is used
+A simplified facebook-like app, with user registration, login, posts, comments etc.
+Check out the frontend here: [https://github.com/marinqwe/coolbook-client](coolbook-client)
+
+### Versions used
 ```
-Node - 12.16.3
+Node - v15.3.0
 Database - postgre with sequelize ORM, should also work with mysql
 postgre(pg) - 8.4.1
 pg-hstore - 2.3.3
 ```
 
-### How it's used
+### How to run
 
 Create your database, add variables.env to the root of the project (check variables.env.example)
 
