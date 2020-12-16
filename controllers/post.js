@@ -1,5 +1,5 @@
-const { Post, UserLikes } = require("../db/models");
-const { postValidation } = require("../helpers/validation");
+const { Post, UserLikes, Comment, Sequelize } = require('../db/models');
+const { postValidation } = require('../helpers/validation');
 
 module.exports = {
   async create(req, res, next) {
@@ -10,16 +10,26 @@ module.exports = {
       ...value,
       userId: req.body.userId,
     });
-    if (!post) return next("There was an error, please try again.");
+    if (!post) return next('There was an error, please try again.');
 
     return res.status(201).send(post);
   },
   async getAll(req, res) {
     const posts = await Post.findAll({
-      include: {
-        model: UserLikes,
-        as: "userlikes",
-      },
+      include: [
+        {
+          model: UserLikes,
+          as: 'userlikes',
+        },
+        {
+          model: Comment,
+          as: 'comment',
+          attributes: [
+            [Sequelize.fn('count', Sequelize.col('comment')), 'comment_count'],
+          ],
+        },
+      ],
+      group: ['Post.id', 'comment.id', 'userlikes.id'],
     });
     return res.status(200).send(posts);
   },
@@ -30,10 +40,10 @@ module.exports = {
       },
       include: {
         model: UserLikes,
-        as: "userlikes",
+        as: 'userlikes',
       },
     });
-    if (!post) return next("Post not found");
+    if (!post) return next('Post not found');
     return res.send(post);
   },
   async deletePost(req, res, next) {
@@ -42,7 +52,7 @@ module.exports = {
         id: req.params.id,
       },
     });
-    if (!post) return next("Post not found");
+    if (!post) return next('Post not found');
     await post.destroy();
     return res.send(post);
   },
@@ -57,7 +67,7 @@ module.exports = {
         id,
       },
     });
-    if (!post) return next("Post not found");
+    if (!post) return next('Post not found');
     const updatedPost = await post.update(
       { title, content },
       {
@@ -66,7 +76,7 @@ module.exports = {
         },
       }
     );
-    if (!updatedPost) return next("There was an error, please try again.");
+    if (!updatedPost) return next('There was an error, please try again.');
     return res.send(updatedPost);
   },
 };

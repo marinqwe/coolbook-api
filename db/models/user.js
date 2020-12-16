@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    "User",
+    'User',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -25,8 +25,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       role: {
         type: DataTypes.ENUM,
-        values: ["user", "admin"],
-        defaultValue: "user",
+        values: ['user', 'admin'],
+        defaultValue: 'user',
+        allowNull: false,
+      },
+      dateOfBirth: {
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
     },
@@ -34,16 +38,16 @@ module.exports = (sequelize, DataTypes) => {
   );
   User.associate = function (models) {
     User.hasMany(models.Post, {
-      foreignKey: "id",
-      as: "post",
+      foreignKey: 'id',
+      as: 'post',
     });
     User.hasMany(models.UserLikes, {
-      foreignKey: "id",
-      as: "userlikes",
+      foreignKey: 'id',
+      as: 'userlikes',
     });
     User.hasMany(models.Comment, {
-      foreignKey: "id",
-      as: "comment",
+      foreignKey: 'id',
+      as: 'comment',
     });
   };
   return User;

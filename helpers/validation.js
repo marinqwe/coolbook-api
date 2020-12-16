@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 function registerValidation(formData) {
   const schema = Joi.object({
@@ -6,6 +6,7 @@ function registerValidation(formData) {
     email: Joi.string().required().email(),
     password: Joi.string().min(6).required(),
     userImg: Joi.any(),
+    dateOfBirth: Joi.date().greater('1-1-1900').less('12-31-2020')
   });
   return schema.validate(formData);
 }
