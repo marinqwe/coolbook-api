@@ -1,7 +1,7 @@
 ## Backend for coolbook-client
 
 A simplified facebook-like app, with user registration, login, posts, comments etc.<br />
-Check out the frontend here: [Coolbook-client](https://github.com/marinqwe/coolbook-client)
+Check out the frontend here: [coolbook-client](https://github.com/marinqwe/coolbook-client)
 
 ### Versions used
 ```

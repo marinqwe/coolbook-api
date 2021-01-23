@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "variables.env" });
+require('dotenv').config({ path: 'variables.env' });
 
 const dbConfig = {
   username: process.env.DB_USER,
@@ -6,7 +6,7 @@ const dbConfig = {
   database: process.env.DB_NAME,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
-  dialect: "postgres",
+  dialect: 'postgres',
 };
 
 module.exports = {

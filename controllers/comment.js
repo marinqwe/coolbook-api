@@ -5,7 +5,6 @@ module.exports = {
   async create(req, res, next) {
     const { error, value } = commentValidation({ content: req.body.content });
     if (error) return next(error.details[0].message);
-    console.log('VALIDATED: ', value);
 
     const comment = await Comment.create({
       ...value,
