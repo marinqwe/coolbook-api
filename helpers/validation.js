@@ -1,35 +1,40 @@
 const Joi = require('joi');
 
+const nameSchema = Joi.string().min(2).required();
+const emailSchema = Joi.string().required().email();
+const passwordSchema = Joi.string().min(6).required();
+const imageSchema = Joi.any();
+
 function registerValidation(formData) {
   const schema = Joi.object({
-    name: Joi.string().min(2).required(),
-    email: Joi.string().required().email(),
-    password: Joi.string().min(6).required(),
-    userImg: Joi.any(),
-    dateOfBirth: Joi.date().greater('1-1-1900').less('12-31-2020')
+    name: nameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    userImg: imageSchema,
+    dateOfBirth: Joi.date().greater('1-1-1900').less('12-31-2020'),
   });
   return schema.validate(formData);
 }
 
 function updateProfileValidation(formData) {
   const schema = Joi.object({
-    name: Joi.string().min(2).required(),
-    userImg: Joi.any(),
+    name: nameSchema,
+    userImg: imageSchema,
   });
   return schema.validate(formData);
 }
 
 function loginValidation(formData) {
   const schema = Joi.object({
-    email: Joi.string().required().email(),
-    password: Joi.string().min(6).required(),
+    email: emailSchema,
+    password: passwordSchema,
   });
   return schema.validate(formData);
 }
 
 function postValidation(formData) {
   const schema = Joi.object({
-    title: Joi.string().min(2).required(),
+    title: nameSchema,
     content: Joi.string().required(),
   });
   return schema.validate(formData);
@@ -42,10 +47,8 @@ function commentValidation(formData) {
   return schema.validate(formData);
 }
 
-module.exports = {
-  registerValidation,
-  updateProfileValidation,
-  loginValidation,
-  postValidation,
-  commentValidation,
-};
+exports.registerValidation = registerValidation;
+exports.updateProfileValidation = updateProfileValidation;
+exports.loginValidation = loginValidation;
+exports.postValidation = postValidation;
+exports.commentValidation = commentValidation;

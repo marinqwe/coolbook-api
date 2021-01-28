@@ -1,18 +1,18 @@
-const passport = require("passport");
-module.exports = function (req, res, next) {
+const passport = require('passport');
+module.exports = function authorize(req, res, next) {
   passport.authenticate(
-    "jwt-cookiecombo",
+    'jwt-cookiecombo',
     { session: false },
-    async (error, token) => {
+    (error, token) => {
       if (error || !token) {
-        next({ name: "Unauthorized" });
+        next({ name: 'Unauthorized' });
       }
       try {
         req.user = token;
+        return next();
       } catch (error) {
-        next(error);
+        return next(error);
       }
-      next();
     }
   )(req, res, next);
 };
