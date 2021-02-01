@@ -44,7 +44,6 @@ module.exports = function useChat(server, usersOnline) {
     });
 
     socket.on('message', ({ id, username, message, room }) => {
-      console.log('MSG', message, id, room);
       io.to(room).emit('newMessage', {
         id,
         username,
