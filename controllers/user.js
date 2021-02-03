@@ -1,12 +1,12 @@
-const { User } = require("../db/models");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+const { User } = require('../db/models');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const {
   registerValidation,
   loginValidation,
   updateProfileValidation,
-} = require("../helpers/validation");
-const authConfig = require("../helpers/authConfig");
+} = require('../helpers/validation');
+const authConfig = require('../helpers/authConfig');
 
 module.exports = {
   async register(req, res, next) {
@@ -16,7 +16,7 @@ module.exports = {
     const { email, password } = value;
 
     const user = await User.findOne({ where: { email } });
-    if (user) return next("Email already exists.");
+    if (user) return next('Email already exists.');
 
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
@@ -33,7 +33,7 @@ module.exports = {
     }
 
     const newUser = await User.create(userToCreate);
-    if (!newUser) return next("Register failed, please try again.");
+    if (!newUser) return next('Register failed, please try again.');
 
     return res.status(201).send(newUser);
   },
@@ -43,10 +43,10 @@ module.exports = {
     const { email, password } = value;
 
     const user = await User.findOne({ where: { email } });
-    if (!user) return next("Email not found.");
+    if (!user) return next('Email not found.');
 
     const isValidPass = await bcrypt.compare(password, user.password);
-    if (!isValidPass) return next("Invalid password.");
+    if (!isValidPass) return next('Invalid password.');
 
     jwt.sign(
       { email, role: user.role },
@@ -54,15 +54,15 @@ module.exports = {
       function (err, token) {
         if (err) return next(err);
 
-        res.cookie("jwt", token, authConfig.jwt.cookie);
+        res.cookie('jwt', token, authConfig.jwt.cookie);
 
         return res.json({ jwt: token, user });
       }
     );
   },
   async logout(req, res) {
-    res.clearCookie("jwt");
-    return res.status(200).send("Success");
+    res.clearCookie('jwt');
+    return res.status(200).send('Success');
   },
   async getUser(req, res) {
     if (req.user) {
@@ -72,12 +72,12 @@ module.exports = {
       return res.send(user);
     }
 
-    return res.json({ msg: "Not logged in" });
+    return res.json({ msg: 'Not logged in' });
   },
   async update(req, res, next) {
     const { error, value } = updateProfileValidation(req.body);
     if (error) return next(error.details[0].message);
-    const { name } = value;
+    const { name, dateOfBirth } = value;
     const email = req.user.email;
 
     const user = await User.findOne({
@@ -85,11 +85,12 @@ module.exports = {
         email,
       },
     });
-    if (!user) return next("User not found.");
+    if (!user) return next('User not found.');
 
     //update object
     let fieldsToUpdate = {
       name,
+      dateOfBirth,
     };
 
     //Check if user uploaded new image and add it to update object
@@ -102,7 +103,7 @@ module.exports = {
         id: user.id,
       },
     });
-    if (!updatedUser) return next("Update failed, please try again.");
+    if (!updatedUser) return next('Update failed, please try again.');
 
     return res.status(200).send(updatedUser);
   },

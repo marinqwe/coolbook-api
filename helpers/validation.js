@@ -3,6 +3,7 @@ const Joi = require('joi');
 const nameSchema = Joi.string().min(2).required();
 const emailSchema = Joi.string().required().email();
 const passwordSchema = Joi.string().min(6).required();
+const dateOfBirthSchema = Joi.date().greater('1-1-1900').less('12-31-2020');
 const imageSchema = Joi.any();
 
 exports.registerValidation = function registerValidation(formData) {
@@ -11,7 +12,7 @@ exports.registerValidation = function registerValidation(formData) {
     email: emailSchema,
     password: passwordSchema,
     userImg: imageSchema,
-    dateOfBirth: Joi.date().greater('1-1-1900').less('12-31-2020'),
+    dateOfBirth: dateOfBirthSchema,
   });
   return schema.validate(formData);
 };
@@ -20,6 +21,7 @@ exports.updateProfileValidation = function updateProfileValidation(formData) {
   const schema = Joi.object({
     name: nameSchema,
     userImg: imageSchema,
+    dateOfBirth: dateOfBirthSchema,
   });
   return schema.validate(formData);
 };
