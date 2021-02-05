@@ -12,7 +12,7 @@ postgre(pg) - 8.4.1
 pg-hstore - 2.3.3
 ```
 
-### How to run
+### To run
 
 Create your database, add variables.env to the root of the project (check variables.env.example)
 

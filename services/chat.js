@@ -27,6 +27,17 @@ module.exports = function useChat(server, usersOnline) {
         message: `${user} connected.`,
         timestamp: formatDate(Date.now()),
       });
+
+      //get room users and send them
+      let roomUsers = [];
+      usersOnline.forEach((userObj, key) => {
+        if (userObj.room === room) {
+          roomUsers.push(userObj);
+        }
+      });
+      io.to(room).emit('roomUsers', {
+        users: roomUsers,
+      });
     });
 
     socket.on('leaveRoom', () => {
@@ -39,11 +50,11 @@ module.exports = function useChat(server, usersOnline) {
           timestamp: formatDate(Date.now()),
         });
         usersOnline.set(id, { ...onlineUser, room: null });
-        console.log('USER LEFT: ', onlineUser);
       }
     });
 
     socket.on('message', ({ id, username, message, room }) => {
+      console.log('NEW MESSAGE: ', id, username, room);
       io.to(room).emit('newMessage', {
         id,
         username,
