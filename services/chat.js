@@ -6,18 +6,27 @@ module.exports = function useChat(server, usersOnline) {
   };
   const io = require('socket.io')(server, options);
 
+  // update room users when someone joins/leaves
+  function getRoomUsers(users, room) {
+    let roomUsers = [];
+    users.forEach((userObj) => {
+      if (userObj.room === room) {
+        roomUsers.push(userObj);
+      }
+    });
+    return io.to(room).emit('roomUsers', {
+      users: roomUsers,
+    });
+  }
+
   io.on('connection', (socket) => {
     const { user, id } = socket.handshake.query;
-    console.log('CONNECTED: ', user);
     //save connected users
     if (!usersOnline.has(id)) {
       usersOnline.set(id, { user, socketId: socket.id, room: null });
     }
-    //can't emit Maps so convert to array
-    //io.emit('usersOnline', JSON.stringify(Array.from(usersOnline)));
 
     socket.on('joinRoom', ({ room }) => {
-      console.log('USER JOINED: ', user, room);
       const onlineUser = usersOnline.get(id);
       usersOnline.set(id, { ...onlineUser, room });
       socket.join(room);
@@ -28,33 +37,27 @@ module.exports = function useChat(server, usersOnline) {
         timestamp: formatDate(Date.now()),
       });
 
-      //get room users and send them
-      let roomUsers = [];
-      usersOnline.forEach((userObj, key) => {
-        if (userObj.room === room) {
-          roomUsers.push(userObj);
-        }
-      });
-      io.to(room).emit('roomUsers', {
-        users: roomUsers,
-      });
+      getRoomUsers(usersOnline, room);
     });
 
     socket.on('leaveRoom', () => {
       const onlineUser = usersOnline.get(id);
       if (onlineUser) {
-        socket.broadcast.to(onlineUser.room).emit('newMessage', {
+        const room = onlineUser.room;
+
+        socket.broadcast.to(room).emit('newMessage', {
           id: null,
           username: 'ChatBot',
           message: `${onlineUser.user} disconnected.`,
           timestamp: formatDate(Date.now()),
         });
         usersOnline.set(id, { ...onlineUser, room: null });
+
+        getRoomUsers(usersOnline, room);
       }
     });
 
     socket.on('message', ({ id, username, message, room }) => {
-      console.log('NEW MESSAGE: ', id, username, room);
       io.to(room).emit('newMessage', {
         id,
         username,
@@ -63,25 +66,22 @@ module.exports = function useChat(server, usersOnline) {
       });
     });
 
-    // socket.on(
-    //   'privateChatMsg',
-    //   ({ id, username, message, timestamp, partnerId }) => {
-    //     console.log('MSG', message, id, partnerId);
-    //     io.to(partnerId).emit('privateChatMsg', {
-    //       id,
-    //       username,
-    //       message,
-    //       timestamp: formatDate(Date.now()),
-    //     });
-    //   }
-    // );
-
     socket.on('disconnect', () => {
-      const userOnline = usersOnline.has(id);
-      if (userOnline) {
+      const onlineUser = usersOnline.get(id);
+
+      if (onlineUser) {
+        if (onlineUser.room) {
+          socket.broadcast.to(onlineUser.room).emit('newMessage', {
+            id: null,
+            username: 'ChatBot',
+            message: `${onlineUser.user} disconnected.`,
+            timestamp: formatDate(Date.now()),
+          });
+
+          getRoomUsers(usersOnline, onlineUser.room);
+        }
         usersOnline.delete(id);
       }
-      console.log('CLIENT DISCONNECTED');
     });
   });
 };
