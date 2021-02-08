@@ -53,7 +53,6 @@ module.exports = {
       authConfig.jwt.secret,
       function (err, token) {
         if (err) return next(err);
-
         res.cookie('jwt', token, authConfig.jwt.cookie);
 
         return res.json({ jwt: token, user });

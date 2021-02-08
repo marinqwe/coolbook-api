@@ -1,5 +1,5 @@
-var JwtCookieComboStrategy = require("passport-jwt-cookiecombo");
-const authConfig = require("../helpers/authConfig");
+var JwtCookieComboStrategy = require('passport-jwt-cookiecombo');
+const authConfig = require('../helpers/authConfig');
 
 const passportStrategy = new JwtCookieComboStrategy(
   {
@@ -14,7 +14,7 @@ const passportStrategy = new JwtCookieComboStrategy(
   }
 );
 
-module.exports = function (passport) {
+module.exports = function passportConfig(passport) {
   passport.use(passportStrategy);
   return passport;
 };
